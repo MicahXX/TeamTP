@@ -1,0 +1,62 @@
+teams:
+  a:
+    display-name: '&cTeam A'
+    group: team_a
+  b:
+    display-name: '&9Team B'
+    group: team_b
+  c:
+    display-name: '&aTeam C'
+    group: team_c
+  d:
+    display-name: '&eTeam D'
+    group: team_d
+
+distribution:
+  exempt-permission: team.exempt
+  skip-spectators: true
+  notify-players: true
+
+performance:
+  starts-per-tick: 4
+  concurrent-teleports: 8
+  concurrent-saves: 4
+  stall-timeout-seconds: 60
+
+teleport:
+  spread-radius: 5
+  vertical-search: 2
+  safe-locations: true
+  generate-chunks: true
+
+messages:
+  prefix: '&8[&bTeamTP&8] &r'
+  no-permission: '&cYou need team.admin to use this command.'
+  error: '&c{reason}'
+  help: |-
+    &b/team distribute &7- randomly balance eligible online players
+    &b/team setspawn <team> &7- save your position and direction
+    &b/team setspawn <team> <world> <x> <y> <z> [yaw pitch]
+    &b/team tp <team|all> &7- teleport selected teams
+    &b/team list &7- show groups, online counts, and spawns
+    &b/team status &7- show job progress
+    &b/team cancel &7- stop queued work; active requests can still finish
+    &b/team reload &7- validate and reload settings/spawns
+    &7If /team conflicts with vanilla or another plugin, use /teamtp.
+  busy: '&eA job is active. Use /team status or /team cancel and wait for it to finish.'
+  idle: '&7No job is active.'
+  started: '&eStarting {job}: {count} work items.'
+  status: '&e{job}: {success} successful, {failed} failed/skipped, {queued} queued, {active} in flight, {cancelled} cancelled.'
+  finished: '&a{job} finished: {success} successful, {failed} failed/skipped, {cancelled} cancelled.'
+  stalled: '&cA request exceeded the timeout. Queued work stopped. Waiting for active requests; check /team status and the console.'
+  cancelled: '&eQueued work cancelled. Already-started requests may still complete; wait for the final report.'
+  reloaded: '&aSettings loaded and LuckPerms groups ready.'
+  assigned: '&aYou have been assigned to {team}&a!'
+  balanced: '&aAll assignments saved. Team sizes differ by at most one for this snapshot.'
+  partial-distribution: '&cDistribution was partial. Balance is not guaranteed; check the console, resolve failures, then redistribute.'
+  spawn-set: '&aSaved {team}&a spawn: &f{location}'
+  selected: '&eSelected {count} players; {skipped} online players excluded or outside the selection.'
+  preflight-failed: '&cDestination preparation failed/cancelled. No players were teleported. Check the console and spawns.'
+  shared-landings: '&e{team}&e has {spots} safe landing spots; some players will share spots.'
+  team-info: '&f{id}: {team}&7 | group={group} | online={count} | spawn={spawn}'
+  unassigned: '&7Unassigned online: {count}. Invalid team memberships: {invalid}.'

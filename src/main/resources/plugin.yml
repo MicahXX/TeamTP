@@ -1,0 +1,21 @@
+name: TeamTP
+version: '${version}'
+
+main: org.micahcode.teamTP.TeamTP
+api-version: '${apiVersion}'
+load: POSTWORLD
+depend: [LuckPerms]
+description: Balanced LuckPerms teams and bounded asynchronous team teleports.
+authors: [micahcode]
+commands:
+  team:
+    description: Manage event teams and teleport destinations.
+    aliases: [teamtp]
+    usage: /<command> help
+permissions:
+  team.admin:
+    description: Allows all TeamTP administrative commands.
+    default: op
+  team.exempt:
+    description: Excludes a player from distribution and teleport snapshots.
+    default: false
