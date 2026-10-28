@@ -2,37 +2,6 @@
 
 Randomly balance online players into configurable LuckPerms teams, save a destination for each team, and teleport them through a bounded asynchronous queue. Four teams are included by default. No player-count cap is imposed.
 
-## LuckPerms: groups versus permissions
-
-Team membership is a **direct, permanent, global parent group**, not a permission. The default groups are `team_a`, `team_b`, `team_c`, and `team_d`. You do not need to add any permissions to those groups for teleporting to work.
-
-`/team distribute` removes the configured team parents from eligible players, adds exactly one new team parent, and saves each player through LuckPerms. It preserves unrelated ranks, permissions, prefixes, and the player's primary group. It balances the selected online snapshot; successful assignment of 300 players produces 75 per team.
-
-To assign a player manually:
-
-```text
-/lp user PlayerName parent remove team_a
-/lp user PlayerName parent add team_b
-```
-
-Remove any other old team parents as well. Avoid `parent set`, which can remove unrelated ranks. Multiple team parents, temporary parents, negated parents, and contextual team parents produce an error during teleport preflight. Distribution replaces such direct team nodes with a permanent global parent. Team groups inherited indirectly through another group are not used for membership.
-
-The default groups can be replaced with your existing **dedicated event groups** in `config.yml`. Do not map team groups to `default`, admin, or rank groups: distribution removes configured team parents. Do not change LuckPerms membership concurrently with a running TeamTP job. If changing or removing a group mapping, remove obsolete team parents first; groups no longer in the configuration are deliberately not touched.
-
-Permissions:
-
-| Permission | Default | Purpose |
-| --- | --- | --- |
-| `team.admin` | Operators | All TeamTP commands |
-| `team.exempt` | Nobody | Exclude from distribution and teleport snapshots |
-
-```text
-/lp user Organizer permission set team.admin true
-/lp user Spectator permission set team.exempt true
-```
-
-Operators are included in distribution unless exempt. A wildcard permission may grant the exemption too. Set `distribution.exempt-permission` to `''` to disable this filter. Spectators are excluded by default.
-
 ## Commands
 
 | Command | Action |
