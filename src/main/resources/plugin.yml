@@ -5,7 +5,7 @@ main: org.micahcode.teamTP.TeamTP
 api-version: '${apiVersion}'
 load: POSTWORLD
 depend: [LuckPerms]
-description: Balanced LuckPerms teams and bounded asynchronous team teleports.
+description: Balanced LuckPerms teams and bounded asynchronous team teleports. Made by micahcode. Licensed under the MIT License.
 authors: [micahcode]
 commands:
   team:
