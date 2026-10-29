@@ -2,6 +2,12 @@
 
 Randomly balance online players into configurable LuckPerms teams, save a destination for each team, and teleport them through a bounded asynchronous queue. Four teams are included by default. No player-count cap is imposed.
 
+## Death respawning
+
+Players respawn after death at their team's saved `/team setspawn` location by default, including its direction. This overrides beds, respawn anchors, and the normal world spawn. Set `respawn.at-team-spawn: false` in `config.yml` and run `/team reload` to disable it. Existing configs that omit the setting inherit the enabled default.
+
+Players without a team, or whose team spawn is missing or invalid (including an unloaded world), keep their normal respawn location. Returning from the End is unaffected. Respawning uses the exact saved location; the command's spread and safe-location search apply only to `/team tp`. Keep team spawns safe. Distribution exemptions do not disable team respawning.
+
 ## Commands
 
 | Command | Action |

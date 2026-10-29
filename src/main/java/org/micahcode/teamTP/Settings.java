@@ -5,11 +5,14 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.*;
 
+/** Validated configuration shared by team commands and death respawning. */
 public record Settings(List<Team> teams, int startsPerTick, int concurrentTeleports,
                        int concurrentSaves, int timeoutSeconds, int spreadRadius,
                        int verticalSearch, boolean safeLocations, boolean generateChunks,
-                       boolean skipSpectators, String exemptPermission, boolean notifyPlayers) {
+                       boolean skipSpectators, String exemptPermission, boolean notifyPlayers,
+                       boolean respawnAtTeamSpawn) {
 
+    /** Parses configuration values and rejects invalid team or behavior settings. */
     public static Settings parse(YamlConfiguration config) {
         ConfigurationSection section = config.getConfigurationSection("teams");
         if (section == null || section.getKeys(false).isEmpty() || section.getKeys(false).size() > 32) {
@@ -39,7 +42,7 @@ public record Settings(List<Team> teams, int startsPerTick, int concurrentTelepo
                 integer(config, "teleport.vertical-search", 0, 4),
                 bool(config, "teleport.safe-locations"), bool(config, "teleport.generate-chunks"),
                 bool(config, "distribution.skip-spectators"), exempt,
-                bool(config, "distribution.notify-players"));
+                bool(config, "distribution.notify-players"), bool(config, "respawn.at-team-spawn"));
     }
 
     private static int integer(YamlConfiguration config, String path, int min, int max) {

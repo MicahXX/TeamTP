@@ -1,3 +1,4 @@
+# made by micahcode for Valor
 teams:
   a:
     display-name: '&cTeam A'
@@ -22,6 +23,10 @@ performance:
   concurrent-teleports: 8
   concurrent-saves: 4
   stall-timeout-seconds: 60
+
+respawn:
+  # Respawn at the saved team spawn after death instead of a bed, anchor, or world spawn.
+  at-team-spawn: true
 
 teleport:
   spread-radius: 5

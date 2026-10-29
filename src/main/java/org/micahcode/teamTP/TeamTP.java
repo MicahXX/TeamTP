@@ -41,6 +41,7 @@ public final class TeamTP extends JavaPlugin {
             Objects.requireNonNull(getCommand("team")).setExecutor(handler);
             Objects.requireNonNull(getCommand("team")).setTabCompleter(handler);
             loadSettings(getServer().getConsoleSender());
+            getServer().getPluginManager().registerEvents(new RespawnListener(this), this);
         } catch (Exception error) {
             getLogger().log(Level.SEVERE, "TeamTP startup failed; fix configuration/dependencies and restart.", error);
             getServer().getPluginManager().disablePlugin(this);

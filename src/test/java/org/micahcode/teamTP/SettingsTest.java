@@ -20,6 +20,20 @@ class SettingsTest {
         assertEquals(4, settings.startsPerTick());
         assertEquals(8, settings.concurrentTeleports());
         assertEquals("team_a", settings.team("A").group());
+        assertTrue(settings.respawnAtTeamSpawn());
+    }
+
+    /** Verifies that existing configs inherit the enabled default and can opt out. */
+    @Test
+    void supportsDefaultAndExplicitRespawnSettings() {
+        var config = defaults();
+        config.set("respawn", null);
+        config.setDefaults(defaults());
+        assertTrue(Settings.parse(config).respawnAtTeamSpawn());
+        config.set("respawn.at-team-spawn", false);
+        assertFalse(Settings.parse(config).respawnAtTeamSpawn());
+        config.set("respawn.at-team-spawn", "maybe");
+        assertThrows(IllegalArgumentException.class, () -> Settings.parse(config));
     }
 
     @Test
