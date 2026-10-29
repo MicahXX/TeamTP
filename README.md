@@ -2,8 +2,6 @@
 
 Randomly balance online players into configurable LuckPerms teams, save a destination for each team, and teleport them through a bounded asynchronous queue. Four teams are in the config by default.
 
-Made by **micahcode**. Licensed under the [MIT License](LICENSE).
-
 ## Commands
 
 | Command | Action |
