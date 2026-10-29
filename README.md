@@ -1,6 +1,7 @@
 # TeamTP
 
-Randomly balance online players into configurable LuckPerms teams, save a destination for each team, and teleport them through a bounded asynchronous queue. Four teams are in the config by default.
+Randomly balance online players into configurable LuckPerms teams, save a destination for
+each team and teleport them through a bounded asynchronous queue. Four teams are in the config by default.
 
 ## Commands
 
