@@ -102,6 +102,33 @@ class TeleportServiceTest {
     }
 
     @Test
+    void temporaryDestinationNeedsNoSavedSpawnsAndIsCapturedBeforeQueueing() {
+        addPlayers(8);
+        Location target = new Location(SpawnStoreTest.world(), 250, 80, 100, 45, 10);
+        expected.replaceAll((player, old) -> target.clone());
+        reset(spawns);
+        try (var bukkit = mockStatic(Bukkit.class);
+             var safe = mockStatic(SafeDestinations.class);
+             var constructed = mockConstruction(SafeDestinations.class, (mock, context) ->
+                     when(mock.prepare(any(Location.class), eq(settings))).thenAnswer(call ->
+                             CompletableFuture.completedFuture(List.of(call.getArgument(0, Location.class)))))) {
+            bukkit.when(Bukkit::getOnlinePlayers).thenReturn(players.values());
+            bukkit.when(() -> Bukkit.getPlayer(any(UUID.class))).thenAnswer(call -> players.get(call.getArgument(0)));
+            safe.when(() -> SafeDestinations.valid(any(Location.class), eq(true))).thenReturn(true);
+            service.teleportTo(sender, "all", settings, messages, target);
+            target.setX(999);
+            for (int i = 0; i < 30 && jobs.busy(); i++) {
+                active.values().forEach(future -> future.complete(true));
+                active.clear();
+                tick.get().run();
+            }
+            assertFalse(jobs.busy());
+            assertEquals(8, dispatched.size());
+            verifyNoInteractions(spawns);
+        } finally { jobs.close(); service.close(); }
+    }
+
+    @Test
     void preparationFailureMovesNobodyAndReleasesTickets() {
         addPlayers(8);
         try (var bukkit = mockStatic(Bukkit.class);
