@@ -26,6 +26,17 @@ public final class TeleportService implements AutoCloseable {
     }
 
     public void teleport(CommandSender sender, String selection, Settings settings, Messages messages, SpawnStore spawns) {
+        teleport(sender, selection, settings, messages, spawns::get);
+    }
+
+    public void teleportTo(CommandSender sender, String selection, Settings settings, Messages messages, Location target) {
+        SpawnStore.validate(target);
+        Location destination = target.clone();
+        teleport(sender, selection, settings, messages, team -> destination.clone());
+    }
+
+    private void teleport(CommandSender sender, String selection, Settings settings, Messages messages,
+                          java.util.function.Function<Team, Location> destination) {
         Team selected = selection.equalsIgnoreCase("all") ? null : settings.team(selection);
         List<Participant> participants = new ArrayList<>();
         int skipped = 0;
@@ -38,7 +49,7 @@ public final class TeleportService implements AutoCloseable {
         if (participants.isEmpty()) throw new IllegalArgumentException("No eligible online players in the selected team(s).");
         Map<Team, Location> origins = new LinkedHashMap<>();
         for (Participant participant : participants) {
-            origins.computeIfAbsent(participant.team(), spawns::get);
+            origins.computeIfAbsent(participant.team(), destination);
         }
         messages.send(sender, "selected", "count", participants.size(), "skipped", skipped);
         destinations = new SafeDestinations(plugin, mainThread);
