@@ -12,14 +12,12 @@ each team and teleport them through a bounded asynchronous queue. Four teams are
 | `/team setspawn <team> <world> <x> <y> <z> [yaw pitch]` | Set a destination from console or in game (the world must be loaded) |
 | `/team tp <team>` | Teleport one team's eligible online players |
 | `/team tp all` | Teleport every assigned eligible online player |
+| `/team tphere <team\|all>` | Bring eligible team players to your current position without changing saved spawns |
+| `/team tphere <team\|all> <world> <x> <y> <z> [yaw pitch]` | Teleport teams to temporary coordinates without changing saved spawns |
+| `/team tp <team\|all> <world> <x> <y> <z> [yaw pitch]` | Also teleport teams to temporary coordinates without changing saved spawns |
 | `/team list` | Show online team counts, groups, destinations and invalid membership count |
 | `/team status` | Show queued, in-flight, completed, failed and cancelled work |
 | `/team cancel` | Stop queued work (already-started requests can still complete) |
 | `/team reload` | Validate settings and spawns, initialize groups, then apply the configuration |
 
-
-## Temporary team teleport
-
-Staff with `team.admin` can use `/teamtp tphere green` or `/teamtp tphere all` to bring eligible team players to the command sender's current position. The command uses the existing safe-landing, spread and batched teleport pipeline. It never changes saved respawn points.
-
-For coordinates, use `/teamtp tphere green world 100 80 200` or `/teamtp tp green world 100 80 200`. Optional yaw and pitch follow Z. Console must provide world and coordinates. `/teamtp tp green` still uses the saved team spawn. Existing busy, status and cancel controls apply.
+All commands require `team.admin` (operators have it by default). Use `/teamtp` if `/team` conflicts with another command. Console must supply coordinates for temporary teleports.

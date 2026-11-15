@@ -71,7 +71,6 @@ public final class TeamCommand implements TabExecutor {
         plugin.messages().send(sender, "spawn-set", "team", team.displayName(), "location", format(location));
     }
 
-    /** Parses the sender's current position or explicit world coordinates for a one-off destination. */
     private Location destination(CommandSender sender, String[] args) {
         Location location;
         if (args.length == 2) {

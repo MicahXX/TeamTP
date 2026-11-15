@@ -29,7 +29,6 @@ public final class TeleportService implements AutoCloseable {
         teleport(sender, selection, settings, messages, spawns::get);
     }
 
-    /** Teleports to a temporary destination without modifying any saved team spawn. */
     public void teleportTo(CommandSender sender, String selection, Settings settings, Messages messages, Location target) {
         SpawnStore.validate(target);
         Location destination = target.clone();
