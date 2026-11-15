@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.logging.Level;
 
 public final class TeamCommand implements TabExecutor {
-    private static final List<String> SUBCOMMANDS = List.of("help", "distribute", "setspawn", "tp", "list", "status", "cancel", "reload");
+    private static final List<String> SUBCOMMANDS = List.of("help", "distribute", "setspawn", "tp", "tphere", "list", "status", "cancel", "reload");
     private final TeamTP plugin;
 
     public TeamCommand(TeamTP plugin) { this.plugin = plugin; }
@@ -21,7 +21,7 @@ public final class TeamCommand implements TabExecutor {
         if (!sender.hasPermission("team.admin")) { messages.send(sender, "no-permission"); return true; }
         String action = args.length == 0 ? "help" : args[0].toLowerCase(Locale.ROOT);
         try {
-            if (action.equals("help")) { messages.send(sender, "help"); return true; }
+            if (action.equals("help")) { messages.send(sender, "help"); sender.sendMessage("/teamtp tphere <team|all> [world x y z [yaw pitch]] - teleport without changing spawns"); return true; }
             if (action.equals("status") && args.length == 1) {
                 if (plugin.jobs().busy()) plugin.jobs().status(sender);
                 else messages.send(sender, "idle");
@@ -43,8 +43,13 @@ public final class TeamCommand implements TabExecutor {
                 }
                 case "setspawn" -> setSpawn(sender, args);
                 case "tp" -> {
-                    require(args.length == 2);
-                    plugin.teleports().teleport(sender, args[1], plugin.settings(), messages, plugin.spawns());
+                    require(args.length == 2 || args.length == 6 || args.length == 8);
+                    if (args.length == 2) plugin.teleports().teleport(sender, args[1], plugin.settings(), messages, plugin.spawns());
+                    else plugin.teleports().teleportTo(sender, args[1], plugin.settings(), messages, destination(sender, args));
+                }
+                case "tphere" -> {
+                    require(args.length == 2 || args.length == 6 || args.length == 8);
+                    plugin.teleports().teleportTo(sender, args[1], plugin.settings(), messages, destination(sender, args));
                 }
                 case "list" -> { require(args.length == 1); list(sender); }
                 default -> messages.send(sender, "help");
@@ -61,9 +66,16 @@ public final class TeamCommand implements TabExecutor {
     private void setSpawn(CommandSender sender, String[] args) throws Exception {
         require(args.length == 2 || args.length == 6 || args.length == 8);
         Team team = plugin.settings().team(args[1]);
+        Location location = destination(sender, args);
+        plugin.spawns().save(team, location);
+        plugin.messages().send(sender, "spawn-set", "team", team.displayName(), "location", format(location));
+    }
+
+    /** Parses the sender's current position or explicit world coordinates for a one-off destination. */
+    private Location destination(CommandSender sender, String[] args) {
         Location location;
         if (args.length == 2) {
-            if (!(sender instanceof Player player)) throw new IllegalArgumentException("Console: /team setspawn <team> <world> <x> <y> <z> [yaw pitch]");
+            if (!(sender instanceof Player player)) throw new IllegalArgumentException("Console: /teamtp tphere <team|all> <world> <x> <y> <z> [yaw pitch]");
             location = player.getLocation();
         } else {
             World world = Bukkit.getWorld(args[2]);
@@ -71,8 +83,8 @@ public final class TeamCommand implements TabExecutor {
             location = new Location(world, Double.parseDouble(args[3]), Double.parseDouble(args[4]), Double.parseDouble(args[5]),
                     args.length == 8 ? Float.parseFloat(args[6]) : 0, args.length == 8 ? Float.parseFloat(args[7]) : 0);
         }
-        plugin.spawns().save(team, location);
-        plugin.messages().send(sender, "spawn-set", "team", team.displayName(), "location", format(location));
+        SpawnStore.validate(location);
+        return location;
     }
 
     private void list(CommandSender sender) {
@@ -110,10 +122,10 @@ public final class TeamCommand implements TabExecutor {
         if (!sender.hasPermission("team.admin") || args.length == 0) return List.of();
         List<String> options = new ArrayList<>();
         if (args.length == 1) options.addAll(SUBCOMMANDS);
-        else if (args.length == 2 && plugin.settings() != null && (args[0].equalsIgnoreCase("tp") || args[0].equalsIgnoreCase("setspawn"))) {
+        else if (args.length == 2 && plugin.settings() != null && (args[0].equalsIgnoreCase("tp") || args[0].equalsIgnoreCase("tphere") || args[0].equalsIgnoreCase("setspawn"))) {
             plugin.settings().teams().forEach(team -> options.add(team.id()));
-            if (args[0].equalsIgnoreCase("tp")) options.add("all");
-        } else if (args.length == 3 && args[0].equalsIgnoreCase("setspawn")) Bukkit.getWorlds().forEach(world -> options.add(world.getName()));
+            if (args[0].equalsIgnoreCase("tp") || args[0].equalsIgnoreCase("tphere")) options.add("all");
+        } else if (args.length == 3 && List.of("setspawn", "tp", "tphere").contains(args[0].toLowerCase(Locale.ROOT))) Bukkit.getWorlds().forEach(world -> options.add(world.getName()));
         String partial = args[args.length - 1].toLowerCase(Locale.ROOT);
         return options.stream().filter(option -> option.toLowerCase(Locale.ROOT).startsWith(partial)).toList();
     }
